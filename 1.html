@@ -127,66 +127,51 @@
   }
 
   function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
-  const ctx = canvas.getContext("2d");
-
-  // 清空画布
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const axis = document.createElement("div");
+  axis.className = "axis";
 
   // 绘制横线
-  const horizontalLineY = canvas.height / 2;
-  ctx.beginPath();
-  ctx.moveTo(0, horizontalLineY);
-  ctx.lineTo(canvas.width, horizontalLineY);
-  ctx.stroke();
+  const horizontalLine = document.createElement("div");
+  horizontalLine.style.position = "absolute";
+  horizontalLine.style.top = `${canvas.clientHeight / 2}px`;
+  horizontalLine.style.left = "0";
+  horizontalLine.style.width = `${canvas.clientWidth}px`;
+  horizontalLine.style.height = "1px";
+  horizontalLine.style.backgroundColor = "black";
+  axis.appendChild(horizontalLine);
+
+//right
+const arrowRight = document.createElement("div");
+arrowRight.style.position = "absolute";
+arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
+arrowRight.style.right = "10px";
+arrowRight.style.borderLeft = "5px solid black";
+arrowRight.style.borderTop = "5px solid transparent";
+arrowRight.style.borderBottom = "5px solid transparent";
 
   // 绘制竖线
-  const verticalLineX = canvas.width / 2;
-  ctx.beginPath();
-  ctx.moveTo(verticalLineX, 0);
-  ctx.lineTo(verticalLineX, canvas.height);
-  ctx.stroke();
-
-  // 绘制横线箭头
-  ctx.beginPath();
-  ctx.moveTo(canvas.width, horizontalLineY);
-  ctx.lineTo(canvas.width - 10, horizontalLineY - 5);
-  ctx.lineTo(canvas.width - 10, horizontalLineY + 5);
-  ctx.closePath();
-  ctx.fill();
+  const verticalLine = document.createElement("div");
+  verticalLine.style.position = "absolute";
+  verticalLine.style.top = "0";
+  verticalLine.style.left = `${canvas.clientWidth / 2}px`;
+  verticalLine.style.width = "1px";
+  verticalLine.style.height = `${canvas.clientHeight}px`;
+  verticalLine.style.backgroundColor = "black";
+  axis.appendChild(verticalLine);
 
   // 绘制竖线箭头
-  ctx.beginPath();
-  ctx.moveTo(verticalLineX, 0);
-  ctx.lineTo(verticalLineX - 5, 10);
-  ctx.lineTo(verticalLineX + 5, 10);
-  ctx.closePath();
-  ctx.fill();
+  const arrowUp = document.createElement("div");
+  arrowUp.style.position = "absolute";
+  arrowUp.style.top = "-10px";
+  arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
+  arrowUp.style.borderTop = "5px solid black";
+  arrowUp.style.borderLeft = "5px solid transparent";
+  arrowUp.style.borderRight = "5px solid transparent";
+  arrowUp.style.transform = "rotate(180deg)"; // 将箭头旋转180度
+  axis.appendChild(arrowUp);
 
-  // 绘制刻度
-  const stepX = (maxX - minX) / scaleX;
-  const stepY = (maxY - minY) / scaleY;
-
-  for (let i = 1; i < scaleX; i++) {
-    const x = i * stepX;
-    const xPos = verticalLineX + x;
-    ctx.beginPath();
-    ctx.moveTo(xPos, horizontalLineY - 5);
-    ctx.lineTo(xPos, horizontalLineY + 5);
-    ctx.stroke();
-    ctx.fillText(x.toFixed(1), xPos - 10, horizontalLineY + 20);
-  }
-
-  for (let i = 1; i < scaleY; i++) {
-    const y = i * stepY;
-    const yPos = horizontalLineY - y;
-    ctx.beginPath();
-    ctx.moveTo(verticalLineX - 5, yPos);
-    ctx.lineTo(verticalLineX + 5, yPos);
-    ctx.stroke();
-    ctx.fillText(y.toFixed(1), verticalLineX + 10, yPos + 5);
-  }
+  canvas.appendChild(axis);
 }
-
 
 
 
