@@ -21,15 +21,6 @@
       position: absolute;
       font-size: 16px;
       color: rgba(0, 0, 0, 0.5);
-      animation: moveRotate linear infinite;
-    }
-    @keyframes moveRotate {
-      0% {
-        transform: translate(0, 0) rotate(0);
-      }
-      100% {
-        transform: translate(200px, 200px) rotate(360deg);
-      }
     }
 
     .container {
@@ -84,10 +75,34 @@
       left: 0;
       transform-origin: bottom left;
     }
-    
 
+    .point {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: red;
+      transform: translate(-50%, -50%);
+    }
   </style>
-  </script>
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const formulas = Array.from(document.querySelectorAll('.formula'));
+
+      // 为每个数学公式创建随机的初始位置和运动方向
+      formulas.forEach(formula => {
+        formula.style.top = `${Math.random() * 100}vh`;
+        formula.style.left = `${Math.random() * 100}vw`;
+        formula.style.animationDuration = `${Math.random() * 8 + 4}s`; // 随机设置动画持续时间
+        formula.style.transform = `rotate(${Math.random() * 360}deg)`; // 随机旋转角度
+
+        // 监听动画结束事件，当公式移出屏幕时重新设置位置和角度
+        formula.addEventListener('animationend', () => {
+          formula.style.top = `${Math.random() * 100}vh`;
+          formula.style.left = `${Math.random() * 100}vw`;
+          formula.style.transform = `rotate(${Math.random() * 360}deg)`;
+        });
+      });
+    });
   </script>
 </head>
 <body>
@@ -111,20 +126,17 @@
     <div class="formula">v(x) = tanh(x)</div>
     <div class="formula">w(x) = asin(x)</div>
     <div class="formula">
-      
   
 </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
-  
 <div class="container">
   <div class="left-section">
     <h1>数学函数绘图</h1>
     <input type="text" id="expression" placeholder="输入函数表达式">
     <button onclick="drawGraph()">绘制图像</button>
     <p id="error-message" style="color: red;"></p>
-    
   </div>
   <div class="right-section">
     <div id="canvas"></div>
@@ -132,30 +144,6 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function(event) {
-      
-      // 获取所有数学公式元素
-const formulas = document.querySelectorAll('.formula');
-
-// 为每个公式生成随机运动参数并应用
-formulas.forEach((formula) => {
-  // 随机生成translateX、translateY和rotate的值
-  const translateX = getRandomValue(-200, 200);
-  const translateY = getRandomValue(-200, 200);
-  const rotate = getRandomValue(0, 360);
-
-  // 将随机值应用到CSS变量上
-  formula.style.setProperty('--translate-x', `${translateX}px`);
-  formula.style.setProperty('--translate-y', `${translateY}px`);
-  formula.style.setProperty('--rotate', `${rotate}deg`);
-});
-
-// 生成指定范围内的随机整数值
-function getRandomValue(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-    });
   function drawGraph() {
     var canvas = document.getElementById("canvas");
     var expression = document.getElementById("expression").value;
