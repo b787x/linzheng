@@ -84,30 +84,11 @@
       left: 0;
       transform-origin: bottom left;
     }
+    
 
   </style>
   </script>
-  // 获取所有数学公式元素
-const formulas = document.querySelectorAll('.formula');
-
-// 为每个公式生成随机运动参数并应用
-formulas.forEach((formula) => {
-  // 随机生成translateX、translateY和rotate的值
-  const translateX = getRandomValue(-200, 200);
-  const translateY = getRandomValue(-200, 200);
-  const rotate = getRandomValue(0, 360);
-
-  // 将随机值应用到CSS变量上
-  formula.style.setProperty('--translate-x', `${translateX}px`);
-  formula.style.setProperty('--translate-y', `${translateY}px`);
-  formula.style.setProperty('--rotate', `${rotate}deg`);
-});
-
-// 生成指定范围内的随机整数值
-function getRandomValue(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
+  </script>
 </head>
 <body>
   <div class="math-formulas">
@@ -130,17 +111,20 @@ function getRandomValue(min, max) {
     <div class="formula">v(x) = tanh(x)</div>
     <div class="formula">w(x) = asin(x)</div>
     <div class="formula">
+      
   
 </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
+  
 <div class="container">
   <div class="left-section">
     <h1>数学函数绘图</h1>
     <input type="text" id="expression" placeholder="输入函数表达式">
     <button onclick="drawGraph()">绘制图像</button>
     <p id="error-message" style="color: red;"></p>
+    
   </div>
   <div class="right-section">
     <div id="canvas"></div>
@@ -152,6 +136,27 @@ function getRandomValue(min, max) {
     var canvas = document.getElementById("canvas");
     var expression = document.getElementById("expression").value;
     var errorMessage = document.getElementById("error-message");
+    // 获取所有数学公式元素
+const formulas = document.querySelectorAll('.formula');
+
+// 为每个公式生成随机运动参数并应用
+formulas.forEach((formula) => {
+  // 随机生成translateX、translateY和rotate的值
+  const translateX = getRandomValue(-200, 200);
+  const translateY = getRandomValue(-200, 200);
+  const rotate = getRandomValue(0, 360);
+
+  // 将随机值应用到CSS变量上
+  formula.style.setProperty('--translate-x', `${translateX}px`);
+  formula.style.setProperty('--translate-y', `${translateY}px`);
+  formula.style.setProperty('--rotate', `${rotate}deg`);
+});
+
+// 生成指定范围内的随机整数值
+function getRandomValue(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 
     try {
       const expr = math.compile(expression);
