@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>数学函数绘图</title>
+  <style>
+    #canvas {
+      width: 600px;
+      height: 400px;
+      border: 1px solid black;
+    }
+
+    .axis {
+      position: absolute;
+      background-color: black;
+      opacity: 0.6;
+    }
+
+    .plot {
+      position: absolute;
+    }
+
+    .point {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>数学函数绘图</h1>
+  <input type="text" id="expression" placeholder="输入函数表达式">
+  <button onclick="drawGraph()">绘制图像</button>
+  <div id="canvas"></div>
+
+  <script>
+    function drawGraph() {
+      var canvas = document.getElementById("canvas");
+      var expression = document.getElementById("expression").value;
+
+      try {
+        const expr = math.compile(expression);
+
+        // 清空画布
+        canvas.innerHTML = "";
+
+        // 设置画布大小
+        canvas.style.width = "600px";
+        canvas.style.height = "400px";
+
+        const minX = -10;
+        const maxX = 10;
+        const minY = -10;
+        const maxY = 10;
+        const scaleX = canvas.clientWidth / (maxX - minX);
+        const scaleY = canvas.clientHeight / (maxY - minY);
+
+        // 绘制坐标轴
+        drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
+
+        // 绘制函数图像
+        const xValues = math.range(minX, maxX, 0.1).toArray();
+        const yValues = xValues.map(function (x) {
+          return expr.evaluate({ x: x });
+        });
+
+        drawFunction(canvas, scaleX, scaleY, xValues, yValues);
+      } catch (error) {
+        console.log(error);
+        canvas.innerHTML = "<p>无法绘制图像，请输入有效的函数表达式。</p>";
+      }
+    }
+
+    function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
+      const xAxis = document.createElement("div");
+      xAxis.className = "axis";
+      xAxis.style.width = canvas.clientWidth + "px";
+      xAxis.style.top = scaleY * (maxY / (maxY - minY)) * 100 + "%";
+
+      const yAxis = document.createElement("div");
+      yAxis.className = "axis";
+      yAxis.style.height = canvas.clientHeight + "px";
+      yAxis.style.left = scaleX * (-minX / (maxX - minX)) * 100 + "%";
+
+      canvas.appendChild(xAxis);
+      canvas.appendChild(yAxis);
+    }
+
+    function drawFunction(canvas, scaleX, scaleY, xValues, yValues) {
+      const plot = document.createElement("div");
+      plot.className = "plot";
+
+      for (var i = 0; i < xValues.length; i++) {
+        const point = document.createElement("div");
+        point.className = "point";
+        point.style.left = scaleX * (xValues[i] - xValues[0]) * 100 + "%";
+        point.style.bottom = scaleY * (yValues[i] - yValues[0]) * 100 + "%";
+        plot.appendChild(point);
+      }
+
+      canvas.appendChild(plot);
+    }
+
+    // 使用Math.js库进行数学计算和表达式求值
+    const math = mathjs();
+  </script>
+</body>
+</html>
