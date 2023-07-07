@@ -153,8 +153,8 @@
     for (var i = 0; i < xValues.length; i++) {
       const point = document.createElement("div");
       point.className = "point";
-      point.style.left = `${scaleX * (xValues[i] - xValues[0]) * 100}%`;
-      point.style.top = `${scaleY * (yValues[i] - yValues[0]) * 100}%`;
+      point.style.left = `${(xValues[i] - minX) * scaleX}px`;
+      point.style.top = `${canvas.clientHeight - (yValues[i] - minY) * scaleY}px`;
       plot.appendChild(point);
     }
 
