@@ -5,6 +5,31 @@
   <style>
     body {
       background-color: #f2fff2;
+      overflow: hidden; /* 隐藏超出页面范围的元素 */
+    }
+    .math-formulas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* 防止干扰页面上的交互操作 */
+      z-index: -1;
+    }
+
+    .formula {
+      position: absolute;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.5);
+      animation: moveRotate linear infinite;
+    }
+    @keyframes moveRotate {
+      0% {
+        transform: translate(0, 0) rotate(0);
+      }
+      100% {
+        transform: translate(200px, 200px) rotate(360deg);
+      }
     }
 
     .container {
@@ -60,14 +85,53 @@
       transform-origin: bottom left;
     }
 
-    .point {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background-color: red;
-      transform: translate(-50%, -50%);
-    }
   </style>
+  </script>
+  // 获取所有数学公式元素
+const formulas = document.querySelectorAll('.formula');
+
+// 为每个公式生成随机运动参数并应用
+formulas.forEach((formula) => {
+  // 随机生成translateX、translateY和rotate的值
+  const translateX = getRandomValue(-200, 200);
+  const translateY = getRandomValue(-200, 200);
+  const rotate = getRandomValue(0, 360);
+
+  // 将随机值应用到CSS变量上
+  formula.style.setProperty('--translate-x', `${translateX}px`);
+  formula.style.setProperty('--translate-y', `${translateY}px`);
+  formula.style.setProperty('--rotate', `${rotate}deg`);
+});
+
+// 生成指定范围内的随机整数值
+function getRandomValue(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+</head>
+<body>
+  <div class="math-formulas">
+    <div class="formula">f(x) = sin(x)</div>
+    <div class="formula">g(x) = cos(x)</div>
+    <div class="formula">h(x) = tan(x)</div>
+    <div class="formula">i(x) = sin^2(x) + cos^2(x)</div>
+    <div class="formula">j(x) = 1 / (1 + e^(-x))</div>
+    <div class="formula">k(x) = log(x)</div>
+    <div class="formula">l(x) = exp(x)</div>
+    <div class="formula">m(x) = sqrt(abs(x))</div>
+    <div class="formula">n(x) = atan(x)</div>
+    <div class="formula">o(x) = ceil(sin(x))</div>
+    <div class="formula">p(x) = floor(cos(x))</div>
+    <div class="formula">q(x) = pow(x, 3)</div>
+    <div class="formula">r(x) = log10(abs(x))</div>
+    <div class="formula">s(x) = cbrt(x)</div>
+    <div class="formula">t(x) = sinh(x)</div>
+    <div class="formula">u(x) = cosh(x)</div>
+    <div class="formula">v(x) = tanh(x)</div>
+    <div class="formula">w(x) = asin(x)</div>
+    <div class="formula">
+  
+</div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
