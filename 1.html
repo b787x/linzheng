@@ -140,11 +140,11 @@
   horizontalLine.style.backgroundColor = "black";
   axis.appendChild(horizontalLine);
 
-//right
+// 创建横线箭头元素
 const arrowRight = document.createElement("div");
 arrowRight.style.position = "absolute";
 arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
-arrowRight.style.right = "10px";
+arrowRight.style.left = `${canvas.clientWidth - 10}px`; // 将 right 改为 left，并计算合适的位置
 arrowRight.style.borderLeft = "5px solid black";
 arrowRight.style.borderTop = "5px solid transparent";
 arrowRight.style.borderBottom = "5px solid transparent";
