@@ -84,81 +84,128 @@
       transform: translate(-50%, -50%);
     }
   </style>
-  <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-      const formulas = Array.from(document.querySelectorAll('.formula'));
-
-      // 为每个数学公式创建随机的初始位置和运动方向
-      formulas.forEach(formula => {
-        formula.style.top = `${Math.random() * 100}vh`;
-        formula.style.left = `${Math.random() * 100}vw`;
-        formula.style.animationDuration = `${Math.random() * 8 + 4}s`; // 随机设置动画持续时间
-        formula.style.transform = `rotate(${Math.random() * 360}deg)`; // 随机旋转角度
-
-        // 监听动画结束事件，当公式移出屏幕时重新设置位置和角度
-        formula.addEventListener('animationend', () => {
-          formula.style.top = `${Math.random() * 100}vh`;
-          formula.style.left = `${Math.random() * 100}vw`;
-          formula.style.transform = `rotate(${Math.random() * 360}deg)`;
-        });
-      });
-    });
-  </script>
-</head>
-<body>
-  <div class="math-formulas">
-    <div class="formula">f(x) = sin(x)</div>
-    <div class="formula">g(x) = cos(x)</div>
-    <div class="formula">h(x) = tan(x)</div>
-    <div class="formula">i(x) = sin^2(x) + cos^2(x)</div>
-    <div class="formula">j(x) = 1 / (1 + e^(-x))</div>
-    <div class="formula">k(x) = log(x)</div>
-    <div class="formula">l(x) = exp(x)</div>
-    <div class="formula">m(x) = sqrt(abs(x))</div>
-    <div class="formula">n(x) = atan(x)</div>
-    <div class="formula">o(x) = ceil(sin(x))</div>
-    <div class="formula">p(x) = floor(cos(x))</div>
-    <div class="formula">q(x) = pow(x, 3)</div>
-    <div class="formula">r(x) = log10(abs(x))</div>
-    <div class="formula">s(x) = cbrt(x)</div>
-    <div class="formula">t(x) = sinh(x)</div>
-    <div class="formula">u(x) = cosh(x)</div>
-    <div class="formula">v(x) = tanh(x)</div>
-    <div class="formula">w(x) = asin(x)</div>
-    <div class="formula">
-  
-</div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
-<div class="container">
-  <div class="left-section">
-    <h1>数学函数绘图</h1>
-    <input type="text" id="expression" placeholder="输入函数表达式">
-    <button onclick="drawGraph()">绘制图像</button>
-    <p id="error-message" style="color: red;"></p>
+  <div class="container">
+    <div class="left-section">
+      <h1>数学函数绘图</h1>
+      <input type="text" id="expression" placeholder="输入函数表达式">
+      <button onclick="drawGraph()">绘制图像</button>
+      <p id="error-message" style="color: red;"></p>
+    </div>
+    <div class="right-section">
+      <div id="canvas"></div>
+    </div>
   </div>
-  <div class="right-section">
-    <div id="canvas"></div>
-  </div>
-</div>
 
-<script>
-  function drawGraph() {
-    var canvas = document.getElementById("canvas");
-    var expression = document.getElementById("expression").value;
-    var errorMessage = document.getElementById("error-message");
+  <script>
+    function drawGraph() {
+      var canvas = document.getElementById("canvas");
+      var expression = document.getElementById("expression").value;
+      var errorMessage = document.getElementById("error-message");
 
-    try {
-      const expr = math.compile(expression);
+      try {
+        const expr = math.compile(expression);
 
-      // 清空画布
-      canvas.innerHTML = '';
+        // 清空画布
+        canvas.innerHTML = '';
 
-      // 设置画布大小
-      canvas.style.width = "600px";
-      canvas.style.height = "400px";
+        // 设置画布大小
+        canvas.style.width = "600px";
+        canvas.style.height = "400px";
 
+        const minX = -10;
+        const maxX = 10;
+        const minY = -10;
+        const maxY = 10;
+        const scaleX = canvas.clientWidth / (maxX - minX);
+        const scaleY = canvas.clientHeight / (maxY - minY);
+
+        // 绘制坐标轴和原点
+        drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
+
+        // 绘制函数图像
+        const xValues = math.range(minX, maxX, 0.1).toArray();
+        const yValues = xValues.map(function (x) {
+          return expr.evaluate({ x: x });
+        });
+
+        drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues);
+
+        // 清除错误消息
+        errorMessage.textContent = "";
+      } catch (error) {
+        console.log(error);
+        // 显示错误消息
+        errorMessage.textContent = "无法绘制图像，请输入有效的函数表达式。";
+      }
+    }
+
+    function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
+      const axis = document.createElement("div");
+      axis.className = "axis";
+
+      // 绘制横线
+      const horizontalLine = document.createElement("div");
+      horizontalLine.style.position = "absolute";
+      horizontalLine.style.top = `${canvas.clientHeight / 2}px`;
+      horizontalLine.style.left = "0";
+      horizontalLine.style.width = `${canvas.clientWidth}px`;
+      horizontalLine.style.height = "1px";
+      horizontalLine.style.backgroundColor = "black";
+      axis.appendChild(horizontalLine);
+
+      // 创建横线箭头元素
+      const arrowRight = document.createElement("div");
+      arrowRight.style.position = "absolute";
+      arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
+      arrowRight.style.left = `${canvas.clientWidth - 10}px`; // 将 right 改为 left，并计算合适的位置
+      arrowRight.style.borderLeft = "5px solid black";
+      arrowRight.style.borderTop = "5px solid transparent";
+      arrowRight.style.borderBottom = "5px solid transparent";
+
+      // 绘制竖线
+      const verticalLine = document.createElement("div");
+      verticalLine.style.position = "absolute";
+      verticalLine.style.top = "0";
+      verticalLine.style.left = `${canvas.clientWidth / 2}px`;
+      verticalLine.style.width = "1px";
+      verticalLine.style.height = `${canvas.clientHeight}px`;
+      verticalLine.style.backgroundColor = "black";
+      axis.appendChild(verticalLine);
+
+      // 绘制竖线箭头
+      const arrowUp = document.createElement("div");
+      arrowUp.style.position = "absolute";
+      arrowUp.style.top = "-10px";
+      arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
+      arrowUp.style.borderTop = "5px solid black";
+      arrowUp.style.borderLeft = "5px solid transparent";
+      arrowUp.style.borderRight = "5px solid transparent";
+      arrowUp.style.transform = "rotate(180deg)"; // 将箭头旋转180度
+      axis.appendChild(arrowUp);
+
+      canvas.appendChild(axis);
+    }
+
+    function drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues) {
+      const plot = document.createElement("div");
+      plot.className = "plot";
+
+      for (var i = 0; i < xValues.length; i++) {
+        const point = document.createElement("div");
+        point.className = "point";
+        point.style.left = `${(xValues[i] - minX) * scaleX}px`;
+        point.style.top = `${canvas.clientHeight - (yValues[i] - minY) * scaleY}px`;
+        plot.appendChild(point);
+      }
+
+      canvas.appendChild(plot);
+    }
+
+    window.onload = function() {
+      const canvas = document.getElementById("canvas");
       const minX = -10;
       const maxX = 10;
       const minY = -10;
@@ -166,103 +213,8 @@
       const scaleX = canvas.clientWidth / (maxX - minX);
       const scaleY = canvas.clientHeight / (maxY - minY);
 
-      // 绘制坐标轴和原点
       drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
-
-      // 绘制函数图像
-      const xValues = math.range(minX, maxX, 0.1).toArray();
-      const yValues = xValues.map(function (x) {
-        return expr.evaluate({ x: x });
-      });
-
-      drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues);
-
-      // 清除错误消息
-      errorMessage.textContent = "";
-    } catch (error) {
-      console.log(error);
-      // 显示错误消息
-      errorMessage.textContent = "无法绘制图像，请输入有效的函数表达式。";
     }
-  }
-
-  function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
-  const axis = document.createElement("div");
-  axis.className = "axis";
-
-  // 绘制横线
-  const horizontalLine = document.createElement("div");
-  horizontalLine.style.position = "absolute";
-  horizontalLine.style.top = `${canvas.clientHeight / 2}px`;
-  horizontalLine.style.left = "0";
-  horizontalLine.style.width = `${canvas.clientWidth}px`;
-  horizontalLine.style.height = "1px";
-  horizontalLine.style.backgroundColor = "black";
-  axis.appendChild(horizontalLine);
-
-// 创建横线箭头元素
-const arrowRight = document.createElement("div");
-arrowRight.style.position = "absolute";
-arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
-arrowRight.style.left = `${canvas.clientWidth - 10}px`; // 将 right 改为 left，并计算合适的位置
-arrowRight.style.borderLeft = "5px solid black";
-arrowRight.style.borderTop = "5px solid transparent";
-arrowRight.style.borderBottom = "5px solid transparent";
-
-  // 绘制竖线
-  const verticalLine = document.createElement("div");
-  verticalLine.style.position = "absolute";
-  verticalLine.style.top = "0";
-  verticalLine.style.left = `${canvas.clientWidth / 2}px`;
-  verticalLine.style.width = "1px";
-  verticalLine.style.height = `${canvas.clientHeight}px`;
-  verticalLine.style.backgroundColor = "black";
-  axis.appendChild(verticalLine);
-
-  // 绘制竖线箭头
-  const arrowUp = document.createElement("div");
-  arrowUp.style.position = "absolute";
-  arrowUp.style.top = "-10px";
-  arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
-  arrowUp.style.borderTop = "5px solid black";
-  arrowUp.style.borderLeft = "5px solid transparent";
-  arrowUp.style.borderRight = "5px solid transparent";
-  arrowUp.style.transform = "rotate(180deg)"; // 将箭头旋转180度
-  axis.appendChild(arrowUp);
-
-  canvas.appendChild(axis);
-}
-
-
-
-
-
-  function drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues) {
-    const plot = document.createElement("div");
-    plot.className = "plot";
-
-    for (var i = 0; i < xValues.length; i++) {
-      const point = document.createElement("div");
-      point.className = "point";
-      point.style.left = `${(xValues[i] - minX) * scaleX}px`;
-      point.style.top = `${canvas.clientHeight - (yValues[i] - minY) * scaleY}px`;
-      plot.appendChild(point);
-    }
-
-    canvas.appendChild(plot);
-  }
-
-  window.onload = function() {
-    const canvas = document.getElementById("canvas");
-    const minX = -10;
-    const maxX = 10;
-    const minY = -10;
-    const maxY = 10;
-    const scaleX = canvas.clientWidth / (maxX - minX);
-    const scaleY = canvas.clientHeight / (maxY - minY);
-    
-    drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
-  }
-</script>
+  </script>
 </body>
 </html>
