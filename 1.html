@@ -44,6 +44,15 @@
       opacity: 0.6;
     }
 
+    .origin {
+      position: absolute;
+      top: calc(50% - 2px);
+      left: calc(50% - 2px);
+      width: 4px;
+      height: 4px;
+      background-color: black;
+    }
+
     .plot {
       position: absolute;
       top: 0;
@@ -84,9 +93,7 @@
       const expr = math.compile(expression);
 
       // 清空画布
-      while (canvas.firstChild) {
-        canvas.firstChild.remove();
-      }
+      canvas.innerHTML = '';
 
       // 设置画布大小
       canvas.style.width = "600px";
@@ -108,7 +115,7 @@
         return expr.evaluate({ x: x });
       });
 
-      drawFunction(canvas, scaleX, scaleY, xValues, yValues);
+      drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues);
 
       // 清除错误消息
       errorMessage.textContent = "";
@@ -128,9 +135,9 @@
     xAxis.style.width = "100%";
     xAxis.style.height = "1px";
     xAxis.style.left = "0";
-    xAxis.style.top = `${scaleY * (maxY - 0) * 100}%`; // 将坐标转换为百分比
+    xAxis.style.top = `${scaleY * (maxY - 0) * 100}%`;
     xAxis.style.transformOrigin = "top left";
-    xAxis.style.transform = "scaleY(-1)"; // 翻转坐标轴
+    xAxis.style.transform = "scaleY(-1)";
     axis.appendChild(xAxis);
 
     // y轴
@@ -144,9 +151,14 @@
     axis.appendChild(yAxis);
 
     canvas.appendChild(axis);
+
+    // 原点
+    const origin = document.createElement("div");
+    origin.className = "origin";
+    canvas.appendChild(origin);
   }
 
-  function drawFunction(canvas, scaleX, scaleY, xValues, yValues) {
+  function drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues) {
     const plot = document.createElement("div");
     plot.className = "plot";
 
