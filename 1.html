@@ -145,9 +145,10 @@
   arrowRight.style.position = "absolute";
   arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
   arrowRight.style.right = "0";
-  arrowRight.style.border = "solid black";
-  arrowRight.style.borderWidth = "5px 0px 5px 10px";
-  arrowRight.style.transform = "rotate(-45deg)";
+  arrowRight.style.borderLeft = "5px solid black";
+  arrowRight.style.borderTop = "5px solid transparent";
+  arrowRight.style.borderBottom = "5px solid transparent";
+  arrowRight.style.transform = "rotate(180deg)"; // 将箭头旋转180度
   axis.appendChild(arrowRight);
 
   // 绘制竖线
@@ -165,13 +166,16 @@
   arrowUp.style.position = "absolute";
   arrowUp.style.top = "-10px";
   arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
-  arrowUp.style.border = "solid black";
-  arrowUp.style.borderWidth = "0px 5px 10px 5px";
-  arrowUp.style.transform = "rotate(-45deg)";
+  arrowUp.style.borderTop = "5px solid black";
+  arrowUp.style.borderLeft = "5px solid transparent";
+  arrowUp.style.borderRight = "5px solid transparent";
+  arrowUp.style.transform = "rotate(180deg)"; // 将箭头旋转180度
   axis.appendChild(arrowUp);
 
   canvas.appendChild(axis);
 }
+
+
 
 
 
