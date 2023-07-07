@@ -32,10 +32,10 @@
     }
 
     #canvas {
+      position: relative;
       width: 600px;
       height: 400px;
       border: 1px solid black;
-      position: relative; /* 添加相对定位 */
     }
 
     .axis {
@@ -56,7 +56,7 @@
       width: 4px;
       height: 4px;
       background-color: red;
-      transform: translate(-50%, -50%); /* 将点的位置调整到中心点 */
+      transform: translate(-50%, -50%);
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
@@ -67,6 +67,7 @@
     <h1>数学函数绘图</h1>
     <input type="text" id="expression" placeholder="输入函数表达式">
     <button onclick="drawGraph()">绘制图像</button>
+    <p id="error-message" style="color: red;"></p>
   </div>
   <div class="right-section">
     <div id="canvas"></div>
@@ -77,6 +78,7 @@
   function drawGraph() {
     var canvas = document.getElementById("canvas");
     var expression = document.getElementById("expression").value;
+    var errorMessage = document.getElementById("error-message");
 
     try {
       const expr = math.compile(expression);
@@ -107,31 +109,41 @@
       });
 
       drawFunction(canvas, scaleX, scaleY, xValues, yValues);
+
+      // 清除错误消息
+      errorMessage.textContent = "";
     } catch (error) {
       console.log(error);
-      canvas.innerHTML = "<p>无法绘制图像，请输入有效的函数表达式。</p>";
+      // 显示错误消息
+      errorMessage.textContent = "无法绘制图像，请输入有效的函数表达式。";
     }
   }
 
   function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
+    const axis = document.createElement("div");
+    axis.className = "axis";
+
+    // x轴
     const xAxis = document.createElement("div");
-    xAxis.className = "axis";
     xAxis.style.width = "100%";
-    xAxis.style.top = (scaleX * (0 - minY) * 100) + "%"; // 将 y 轴坐标修正为相对于画布的位置
+    xAxis.style.height = "1px";
+    xAxis.style.left = "0";
+    xAxis.style.top = `${scaleY * (maxY - 0) * 100}%`; // 将坐标转换为百分比
+    xAxis.style.transformOrigin = "top left";
+    xAxis.style.transform = "scaleY(-1)"; // 翻转坐标轴
+    axis.appendChild(xAxis);
 
+    // y轴
     const yAxis = document.createElement("div");
-    yAxis.className = "axis";
+    yAxis.style.width = "1px";
     yAxis.style.height = "100%";
-    yAxis.style.left = (scaleY * (-minX) * 100) + "%"; // 将 x 轴坐标修正为相对于画布的位置
+    yAxis.style.left = `${scaleX * (0 - minX) * 100}%`;
+    yAxis.style.top = "0";
+    yAxis.style.transformOrigin = "top left";
+    yAxis.style.transform = "scaleY(-1)";
+    axis.appendChild(yAxis);
 
-    const origin = document.createElement("div");
-    origin.className = "point";
-    origin.style.left = (scaleY * (-minX) * 100) + "%"; // 将原点坐标修正为相对于画布的位置
-    origin.style.bottom = (scaleX * (0 - minY) * 100) + "%"; // 将原点坐标修正为相对于画布的位置
-
-    canvas.appendChild(xAxis);
-    canvas.appendChild(yAxis);
-    canvas.appendChild(origin);
+    canvas.appendChild(axis);
   }
 
   function drawFunction(canvas, scaleX, scaleY, xValues, yValues) {
@@ -141,8 +153,8 @@
     for (var i = 0; i < xValues.length; i++) {
       const point = document.createElement("div");
       point.className = "point";
-      point.style.left = (scaleX * (xValues[i] - xValues[0]) * 100) + "%";
-      point.style.bottom = (scaleY * (yValues[i] - yValues[0]) * 100) + "%";
+      point.style.left = `${scaleX * (xValues[i] - xValues[0]) * 100}%`;
+      point.style.top = `${scaleY * (yValues[i] - yValues[0]) * 100}%`;
       plot.appendChild(point);
     }
 
