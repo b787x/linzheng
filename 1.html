@@ -127,36 +127,53 @@
   }
 
   function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
-    const axis = document.createElement("div");
-    axis.className = "axis";
+            const axis = document.createElement("div");
+            axis.className = "axis";
 
-    // x轴
-    const xAxis = document.createElement("div");
-    xAxis.style.width = "100%";
-    xAxis.style.height = "1px";
-    xAxis.style.left = "0";
-    xAxis.style.top = `${scaleY * (maxY - 0) * 100}%`;
-    xAxis.style.transformOrigin = "top left";
-    xAxis.style.transform = "scaleY(-1)";
-    axis.appendChild(xAxis);
+            // 绘制横线
+            const horizontalLine = document.createElement("div");
+            horizontalLine.style.position = "absolute";
+            horizontalLine.style.top = `${canvas.clientHeight / 2}px`;
+            horizontalLine.style.left = "0";
+            horizontalLine.style.width = `${canvas.clientWidth}px`;
+            horizontalLine.style.height = "1px";
+            horizontalLine.style.backgroundColor = "black";
+            axis.appendChild(horizontalLine);
 
-    // y轴
-    const yAxis = document.createElement("div");
-    yAxis.style.width = "1px";
-    yAxis.style.height = "100%";
-    yAxis.style.left = `${scaleX * (0 - minX) * 100}%`;
-    yAxis.style.top = "0";
-    yAxis.style.transformOrigin = "top left";
-    yAxis.style.transform = "scaleY(-1)";
-    axis.appendChild(yAxis);
+            // 绘制横线箭头
+            const arrowRight = document.createElement("div");
+            arrowRight.style.position = "absolute";
+            arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
+            arrowRight.style.left = `${canvas.clientWidth - 10}px`;
+            arrowRight.style.border = "solid";
+            arrowRight.style.borderWidth = "4px 0 4px 6px";
+            arrowRight.style.borderColor = "black";
+            arrowRight.style.transform = "rotate(45deg)";
+            axis.appendChild(arrowRight);
 
-    canvas.appendChild(axis);
+            // 绘制竖线
+            const verticalLine = document.createElement("div");
+            verticalLine.style.position = "absolute";
+            verticalLine.style.top = "0";
+            verticalLine.style.left = `${canvas.clientWidth / 2}px`;
+            verticalLine.style.width = "1px";
+            verticalLine.style.height = `${canvas.clientHeight}px`;
+            verticalLine.style.backgroundColor = "black";
+            axis.appendChild(verticalLine);
 
-    // 原点
-    const origin = document.createElement("div");
-    origin.className = "origin";
-    canvas.appendChild(origin);
-  }
+            // 绘制竖线箭头
+            const arrowUp = document.createElement("div");
+            arrowUp.style.position = "absolute";
+            arrowUp.style.top = "-10px";
+            arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
+            arrowUp.style.border = "solid";
+            arrowUp.style.borderWidth = "6px 4px 0 4px";
+            arrowUp.style.borderColor = "black";
+            arrowUp.style.transform = "rotate(45deg)";
+            axis.appendChild(arrowUp);
+
+            canvas.appendChild(axis);
+        }
 
   function drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues) {
     const plot = document.createElement("div");
@@ -171,6 +188,18 @@
     }
 
     canvas.appendChild(plot);
+  }
+
+  window.onload = function() {
+    const canvas = document.getElementById("canvas");
+    const minX = -10;
+    const maxX = 10;
+    const minY = -10;
+    const maxY = 10;
+    const scaleX = canvas.clientWidth / (maxX - minX);
+    const scaleY = canvas.clientHeight / (maxY - minY);
+    
+    drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
   }
 </script>
 </body>
