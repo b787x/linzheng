@@ -95,7 +95,7 @@
       const scaleX = canvas.clientWidth / (maxX - minX);
       const scaleY = canvas.clientHeight / (maxY - minY);
 
-      // 绘制坐标轴
+      // 绘制坐标轴和原点
       drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
 
       // 绘制函数图像
@@ -114,16 +114,22 @@
   function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
     const xAxis = document.createElement("div");
     xAxis.className = "axis";
-    xAxis.style.width = canvas.clientWidth + "px";
-    xAxis.style.top = scaleY * (0 - minY) * 100 + "%"; // 将 y 轴坐标修正为相对于画布的位置
+    xAxis.style.width = "100%";
+    xAxis.style.top = scaleX * (0 - minY) * 100 + "%"; // 将 y 轴坐标修正为相对于画布的位置
 
     const yAxis = document.createElement("div");
     yAxis.className = "axis";
-    yAxis.style.height = canvas.clientHeight + "px";
-    yAxis.style.left = scaleX * (-minX) * 100 + "%"; // 将 x 轴坐标修正为相对于画布的位置
+    yAxis.style.height = "100%";
+    yAxis.style.left = scaleY * (-minX) * 100 + "%"; // 将 x 轴坐标修正为相对于画布的位置
+
+    const origin = document.createElement("div");
+    origin.className = "point";
+    origin.style.left = scaleY * (-minX) * 100 + "%"; // 将原点坐标修正为相对于画布的位置
+    origin.style.bottom = scaleX * (0 - minY) * 100 + "%"; // 将原点坐标修正为相对于画布的位置
 
     canvas.appendChild(xAxis);
     canvas.appendChild(yAxis);
+    canvas.appendChild(origin);
   }
 
   function drawFunction(canvas, scaleX, scaleY, xValues, yValues) {
