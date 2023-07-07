@@ -132,11 +132,9 @@
 </div>
 
 <script>
-  function drawGraph() {
-    var canvas = document.getElementById("canvas");
-    var expression = document.getElementById("expression").value;
-    var errorMessage = document.getElementById("error-message");
-    // 获取所有数学公式元素
+  document.addEventListener("DOMContentLoaded", function(event) {
+      
+      // 获取所有数学公式元素
 const formulas = document.querySelectorAll('.formula');
 
 // 为每个公式生成随机运动参数并应用
@@ -157,6 +155,11 @@ function getRandomValue(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+    });
+  function drawGraph() {
+    var canvas = document.getElementById("canvas");
+    var expression = document.getElementById("expression").value;
+    var errorMessage = document.getElementById("error-message");
 
     try {
       const expr = math.compile(expression);
