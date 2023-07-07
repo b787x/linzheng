@@ -82,7 +82,9 @@
       const expr = math.compile(expression);
 
       // 清空画布
-      canvas.innerHTML = "";
+      while (canvas.firstChild) {
+        canvas.firstChild.remove();
+      }
 
       // 设置画布大小
       canvas.style.width = "600px";
@@ -115,17 +117,17 @@
     const xAxis = document.createElement("div");
     xAxis.className = "axis";
     xAxis.style.width = "100%";
-    xAxis.style.top = scaleX * (0 - minY) * 100 + "%"; // 将 y 轴坐标修正为相对于画布的位置
+    xAxis.style.top = (scaleX * (0 - minY) * 100) + "%"; // 将 y 轴坐标修正为相对于画布的位置
 
     const yAxis = document.createElement("div");
     yAxis.className = "axis";
     yAxis.style.height = "100%";
-    yAxis.style.left = scaleY * (-minX) * 100 + "%"; // 将 x 轴坐标修正为相对于画布的位置
+    yAxis.style.left = (scaleY * (-minX) * 100) + "%"; // 将 x 轴坐标修正为相对于画布的位置
 
     const origin = document.createElement("div");
     origin.className = "point";
-    origin.style.left = scaleY * (-minX) * 100 + "%"; // 将原点坐标修正为相对于画布的位置
-    origin.style.bottom = scaleX * (0 - minY) * 100 + "%"; // 将原点坐标修正为相对于画布的位置
+    origin.style.left = (scaleY * (-minX) * 100) + "%"; // 将原点坐标修正为相对于画布的位置
+    origin.style.bottom = (scaleX * (0 - minY) * 100) + "%"; // 将原点坐标修正为相对于画布的位置
 
     canvas.appendChild(xAxis);
     canvas.appendChild(yAxis);
@@ -139,8 +141,8 @@
     for (var i = 0; i < xValues.length; i++) {
       const point = document.createElement("div");
       point.className = "point";
-      point.style.left = scaleX * (xValues[i] - xValues[0]) * 100 + "%";
-      point.style.bottom = scaleY * (yValues[i] - yValues[0]) * 100 + "%";
+      point.style.left = (scaleX * (xValues[i] - xValues[0]) * 100) + "%";
+      point.style.bottom = (scaleY * (yValues[i] - yValues[0]) * 100) + "%";
       plot.appendChild(point);
     }
 
