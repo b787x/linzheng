@@ -144,11 +144,10 @@
             const arrowRight = document.createElement("div");
             arrowRight.style.position = "absolute";
             arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
-            arrowRight.style.left = `${canvas.clientWidth - 10}px`;
-            arrowRight.style.border = "solid";
-            arrowRight.style.borderWidth = "4px 0 4px 6px";
-            arrowRight.style.borderColor = "black";
-            arrowRight.style.transform = "rotate(45deg)";
+            arrowRight.style.right = "0";
+            arrowRight.style.border = "solid black";
+            arrowRight.style.borderWidth = "5px 0px 5px 10px";
+            arrowRight.style.transform = "rotate(-45deg)";
             axis.appendChild(arrowRight);
 
             // 绘制竖线
@@ -164,12 +163,11 @@
             // 绘制竖线箭头
             const arrowUp = document.createElement("div");
             arrowUp.style.position = "absolute";
-            arrowUp.style.top = "-10px";
+            arrowUp.style.top = "0";
             arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
-            arrowUp.style.border = "solid";
-            arrowUp.style.borderWidth = "6px 4px 0 4px";
-            arrowUp.style.borderColor = "black";
-            arrowUp.style.transform = "rotate(45deg)";
+            arrowUp.style.border = "solid black";
+            arrowUp.style.borderWidth = "10px 5px 0px 5px";
+            arrowUp.style.transform = "rotate(-45deg)";
             axis.appendChild(arrowUp);
 
             canvas.appendChild(axis);
