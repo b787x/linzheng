@@ -83,6 +83,26 @@
       background-color: red;
       transform: translate(-50%, -50%);
     }
+    @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-animation {
+    width: 30px;
+    height: 30px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: rotate 1s linear infinite;
+    margin: auto;
+    margin-top: 20px;
+    display: none;
+  }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
@@ -100,10 +120,24 @@
   </div>
 
   <script>
+    function showLoadingAnimation() {
+  const loadingAnimation = document.createElement("div");
+  loadingAnimation.className = "loading-animation";
+  document.body.appendChild(loadingAnimation);
+}
+
+    function hideLoadingAnimation() {
+  const loadingAnimation = document.querySelector(".loading-animation");
+  if (loadingAnimation) {
+    loadingAnimation.remove();
+  }
+}
+
     function drawGraph() {
       var canvas = document.getElementById("canvas");
       var expression = document.getElementById("expression").value;
       var errorMessage = document.getElementById("error-message");
+      showLoadingAnimation();
 
       try {
         const expr = math.compile(expression);
@@ -121,12 +155,13 @@
         const maxY = 10;
         const scaleX = canvas.clientWidth / (maxX - minX);
         const scaleY = canvas.clientHeight / (maxY - minY);
-
+        
+        
         // 绘制坐标轴和原点
         drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
-
+        alert("正在生成，请稍等10秒钟...");
         // 绘制函数图像
-        const xValues = math.range(minX, maxX, 0.0001).toArray();
+        const xValues = math.range(minX, maxX, 0.0005).toArray();
         const yValues = xValues.map(function (x) {
           return expr.evaluate({ x: x });
         });
@@ -139,6 +174,7 @@
         console.log(error);
         // 显示错误消息
         errorMessage.textContent = "无法绘制图像，请输入有效的函数表达式。";
+        hideLoadingAnimation();
       }
     }
 
@@ -202,7 +238,9 @@
       }
 
       canvas.appendChild(plot);
-    }
+
+}
+
 
     window.onload = function() {
       const canvas = document.getElementById("canvas");
@@ -214,6 +252,7 @@
       const scaleY = canvas.clientHeight / (maxY - minY);
 
       drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
+
     }
   </script>
 </body>
