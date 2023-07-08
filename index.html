@@ -3,101 +3,47 @@
 <head>
   <title>数学函数绘图</title>
   <style>
+    /* CSS样式 */
     body {
-      background-color: #f2fff2;
-      overflow: hidden; /* 隐藏超出页面范围的元素 */
-    }
-    .math-formulas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none; /* 防止干扰页面上的交互操作 */
-      z-index: -1;
-    }
-
-    .formula {
-      position: absolute;
-      font-size: 16px;
-      color: rgba(0, 0, 0, 0.5);
-    }
-
-    .container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    .left-section {
-      flex: 1;
-      padding: 20px;
-    }
-
-    .right-section {
-      flex: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #expression {
-      width: 100%;
-      margin-bottom: 10px;
+      font-family: Arial, sans-serif;
     }
 
     #canvas {
-      position: relative;
       width: 600px;
       height: 400px;
-      border: 1px solid black;
+      margin-top: 20px;
+      border: 1px solid #ccc;
     }
 
-    .axis {
-      position: absolute;
-      background-color: black;
-      opacity: 0.6;
+    #expression {
+      width: 300px;
+      padding: 5px;
+      font-size: 14px;
     }
 
-    .origin {
-      position: absolute;
-      top: calc(50% - 2px);
-      left: calc(50% - 2px);
-      width: 4px;
-      height: 4px;
-      background-color: black;
+    #draw-button {
+      padding: 5px 10px;
+      font-size: 16px;
+      margin-top: 10px;
     }
 
-    .plot {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-origin: bottom left;
-    }
-
-    .point {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background-color: red;
-      transform: translate(-50%, -50%);
+    #error-message {
+      color: red;
+      margin-top: 10px;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/math-interpolate/dist/math-interpolate.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="left-section">
-      <h1>数学函数绘图</h1>
-      <input type="text" id="expression" placeholder="输入函数表达式">
-      <button onclick="drawGraph()">绘制图像</button>
-      <p id="error-message" style="color: red;"></p>
-    </div>
-    <div class="right-section">
-      <div id="canvas"></div>
-    </div>
+  <h1>数学函数绘图</h1>
+  <div>
+    <label for="expression">函数表达式:</label>
+    <input type="text" id="expression" placeholder="例如：sin(x)" />
+    <button id="draw-button" onclick="drawGraph()">绘制图像</button>
+    <p id="error-message"></p>
   </div>
+  <div id="canvas"></div>
 
   <script>
     function drawGraph() {
@@ -117,21 +63,21 @@
 
         const minX = -10;
         const maxX = 10;
-        const minY = -10;
-        const maxY = 10;
-        const scaleX = canvas.clientWidth / (maxX - minX);
-        const scaleY = canvas.clientHeight / (maxY - minY);
+        const interval = 0.1;
 
         // 绘制坐标轴和原点
-        drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
+        drawAxis(canvas, minX, maxX);
 
-        // 绘制函数图像
-        const xValues = math.range(minX, maxX, 0.1).toArray();
+        // 绘制函数图像（使用插值算法）
+        const xValues = math.range(minX, maxX, interval).toArray();
         const yValues = xValues.map(function (x) {
           return expr.evaluate({ x: x });
         });
 
-        drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues);
+        const interpolatedX = math.range(minX, maxX, 0.01).toArray();
+        const interpolatedY = mathInterpolate.interpCubic(xValues, yValues, interpolatedX);
+
+        drawFunction(canvas, minX, maxX, interpolatedX, interpolatedY);
 
         // 清除错误消息
         errorMessage.textContent = "";
@@ -142,78 +88,63 @@
       }
     }
 
-    function drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY) {
-      const axis = document.createElement("div");
-      axis.className = "axis";
+    function drawAxis(canvas, minX, maxX) {
+      var ctx = canvas.getContext("2d");
+      var width = canvas.width;
+      var height = canvas.height;
 
-      // 绘制横线
-      const horizontalLine = document.createElement("div");
-      horizontalLine.style.position = "absolute";
-      horizontalLine.style.top = `${canvas.clientHeight / 2}px`;
-      horizontalLine.style.left = "0";
-      horizontalLine.style.width = `${canvas.clientWidth}px`;
-      horizontalLine.style.height = "1px";
-      horizontalLine.style.backgroundColor = "black";
-      axis.appendChild(horizontalLine);
+      var xAxisPos = height / 2;
+      var yAxisPos = width / 2;
 
-      // 创建横线箭头元素
-      const arrowRight = document.createElement("div");
-      arrowRight.style.position = "absolute";
-      arrowRight.style.top = `${canvas.clientHeight / 2 - 5}px`;
-      arrowRight.style.left = `${canvas.clientWidth - 10}px`; // 将 right 改为 left，并计算合适的位置
-      arrowRight.style.borderLeft = "5px solid black";
-      arrowRight.style.borderTop = "5px solid transparent";
-      arrowRight.style.borderBottom = "5px solid transparent";
+      ctx.beginPath();
+      ctx.moveTo(0, xAxisPos);
+      ctx.lineTo(width, xAxisPos);
+      ctx.moveTo(yAxisPos, 0);
+      ctx.lineTo(yAxisPos, height);
+      ctx.strokeStyle = "#aaa";
+      ctx.stroke();
 
-      // 绘制竖线
-      const verticalLine = document.createElement("div");
-      verticalLine.style.position = "absolute";
-      verticalLine.style.top = "0";
-      verticalLine.style.left = `${canvas.clientWidth / 2}px`;
-      verticalLine.style.width = "1px";
-      verticalLine.style.height = `${canvas.clientHeight}px`;
-      verticalLine.style.backgroundColor = "black";
-      axis.appendChild(verticalLine);
+      var numXMarkings = width / 50;
+      var xInterval = (maxX - minX) / numXMarkings;
 
-      // 绘制竖线箭头
-      const arrowUp = document.createElement("div");
-      arrowUp.style.position = "absolute";
-      arrowUp.style.top = "-10px";
-      arrowUp.style.left = `${canvas.clientWidth / 2 - 5}px`;
-      arrowUp.style.borderTop = "5px solid black";
-      arrowUp.style.borderLeft = "5px solid transparent";
-      arrowUp.style.borderRight = "5px solid transparent";
-      arrowUp.style.transform = "rotate(180deg)"; // 将箭头旋转180度
-      axis.appendChild(arrowUp);
+      for (var i = 1; i < numXMarkings; i++) {
+        var xPos = i * width / numXMarkings;
+        var xValue = minX + i * xInterval;
 
-      canvas.appendChild(axis);
+        ctx.beginPath();
+        ctx.moveTo(xPos, xAxisPos - 5);
+        ctx.lineTo(xPos, xAxisPos + 5);
+        ctx.strokeStyle = "#aaa";
+        ctx.stroke();
+
+        ctx.fillStyle = "#000";
+        ctx.fillText(xValue.toFixed(1), xPos - 10, xAxisPos + 20);
+      }
     }
 
-    function drawFunction(canvas, scaleX, scaleY, minX, minY, xValues, yValues) {
-      const plot = document.createElement("div");
-      plot.className = "plot";
+    function drawFunction(canvas, minX, maxX, xValues, yValues) {
+      var ctx = canvas.getContext("2d");
+      var width = canvas.width;
+      var height = canvas.height;
 
-      for (var i = 0; i < xValues.length; i++) {
-        const point = document.createElement("div");
-        point.className = "point";
-        point.style.left = `${(xValues[i] - minX) * scaleX}px`;
-        point.style.top = `${canvas.clientHeight - (yValues[i] - minY) * scaleY}px`;
-        plot.appendChild(point);
+      var xRange = maxX - minX;
+      var yRange = Math.max(...yValues) - Math.min(...yValues);
+
+      var xScale = width / xRange;
+      var yScale = height / yRange;
+
+      ctx.beginPath();
+      ctx.moveTo((xValues[0] - minX) * xScale, height - ((yValues[0] - Math.min(...yValues)) * yScale));
+
+      for (var i = 1; i < xValues.length; i++) {
+        var x = (xValues[i] - minX) * xScale;
+        var y = height - ((yValues[i] - Math.min(...yValues)) * yScale);
+        ctx.lineTo(x, y);
       }
 
-      canvas.appendChild(plot);
-    }
-
-    window.onload = function() {
-      const canvas = document.getElementById("canvas");
-      const minX = -10;
-      const maxX = 10;
-      const minY = -10;
-      const maxY = 10;
-      const scaleX = canvas.clientWidth / (maxX - minX);
-      const scaleY = canvas.clientHeight / (maxY - minY);
-
-      drawAxis(canvas, scaleX, scaleY, minX, maxX, minY, maxY);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#f00";
+      ctx.stroke();
     }
   </script>
 </body>
